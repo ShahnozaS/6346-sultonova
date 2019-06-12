@@ -1,49 +1,62 @@
 package ru.cft.focusstart.shape;
 
-import ru.cft.focusstart.param.ParamsTriangle;
+import ru.cft.focusstart.exc.AppException;
+import ru.cft.focusstart.param.ShapeParams;
 
 import java.text.DecimalFormat;
 
 public class Triangle extends GeometricFigure {
+    private double sideA;
+    private double sideB;
+    private double sideC;
+    private double alfaSideA;
+    private double bettaSideB;
+    private double gammaSideC;
     private double perimeter;
     private double area;
-    private ParamsTriangle params;
 
-    public Triangle(ParamsTriangle params) {
-        this.params = params;
-        perimeter = 0;
-        area = 0;
+    public Triangle(ShapeParams shapeParams) throws AppException {
+        if (shapeParams.params.size() != 3) {
+            throw new AppException("Wrong number of parameters");
+        }
+        sideA = shapeParams.params.get(0);
+        sideB = shapeParams.params.get(1);
+        sideC = shapeParams.params.get(2);
+
+        if (isTriangleExists()) {
+            perimeter = calcPerimeter();
+            area = calcArea();
+            calcAngles();
+        } else {
+            throw new AppException("Parameters don't form a triangle");
+        }
     }
 
     @Override
-    public void calcPerimeter() {
-        this.perimeter = params.getSideA() + params.getSideB() + params.getSideC();
+    public double calcPerimeter() {
+        return sideA + sideB + sideC;
     }
 
     @Override
-    public void calcArea() {
-        double halfPerim = (params.getSideA() + params.getSideB() + params.getSideC()) / 2;
-        area = Math.sqrt(halfPerim * (halfPerim - params.getSideA())
-                * (halfPerim - params.getSideB()) * (halfPerim - params.getSideC()));
+    public double calcArea() {
+        double halfPerim = (sideA + sideB + sideC) / 2;
+        return Math.sqrt(halfPerim * (halfPerim - sideA) * (halfPerim - sideB) * (halfPerim - sideC));
     }
 
-    public void calcAngles() {
-        double alfaA = Math.acos((sqr(params.getSideB()) + sqr(params.getSideC()) - sqr(params.getSideA()))
-                / (2 * params.getSideB() * params.getSideC()));
-        double bettaB = Math.acos((sqr(params.getSideA()) + sqr(params.getSideC()) - sqr(params.getSideB()))
-                / (2 * params.getSideA() * params.getSideC()));
-        double gammaC = Math.acos((sqr(params.getSideA()) + sqr(params.getSideB()) - sqr(params.getSideC()))
-                / (2 * params.getSideA() * params.getSideB()));
-        params.setAlfaSideA(Math.toDegrees(alfaA));
-        params.setBettaSideB(Math.toDegrees(bettaB));
-        params.setGammaSideC(Math.toDegrees(gammaC));
+    private void calcAngles() {
+        alfaSideA = Math.toDegrees(Math.acos((Math.pow(sideB, 2) + Math.pow(sideC, 2) - Math.pow(sideA, 2))
+                / (2 * sideB * sideC)));
+        bettaSideB = Math.toDegrees(Math.acos((Math.pow(sideA, 2) + Math.pow(sideC, 2) - Math.pow(sideB, 2))
+                / (2 * sideA * sideC)));
+        gammaSideC = Math.toDegrees(Math.acos((Math.pow(sideA, 2) + Math.pow(sideB, 2) - Math.pow(sideC, 2))
+                / (2 * sideA * sideB)));
     }
 
     //проверка существования треугольника
-    public boolean isTriangleExists(ParamsTriangle params) {
-        return (params.getSideA() + params.getSideB()) > params.getSideC() &&
-                (params.getSideB() + params.getSideC()) > params.getSideA() &&
-                (params.getSideC() + params.getSideA()) > params.getSideB();
+    private boolean isTriangleExists() {
+        boolean isPositive = sideA > 0 && sideB > 0 && sideC > 0;
+        boolean isTrExists = (sideA + sideB) > sideC && (sideB + sideC) > sideA && (sideC + sideA) > sideB;
+        return isPositive && isTrExists;
     }
 
     @Override
@@ -52,11 +65,11 @@ public class Triangle extends GeometricFigure {
         return "Тип фигуры: Треугольник \r\n" +
                 "Площадь: " + dFormat.format(area) + "\r\n" +
                 "Периметр: " + dFormat.format(perimeter) + "\r\n" +
-                "Длина стороны а: " + dFormat.format(params.getSideA()) +
-                ", угол: " + dFormat.format(params.getAlfaSideA()) + "\r\n" +
-                "Длина стороны b: " + dFormat.format(params.getSideB()) +
-                ", угол: " + dFormat.format(params.getBettaSideB()) + "\r\n" +
-                "Длина стороны c: " + dFormat.format(params.getSideC()) +
-                ", угол: " + params.getGammaSideC();
+                "Длина стороны а: " + dFormat.format(sideA) +
+                ", угол: " + dFormat.format(alfaSideA) + "\r\n" +
+                "Длина стороны b: " + dFormat.format(sideB) +
+                ", угол: " + dFormat.format(bettaSideB) + "\r\n" +
+                "Длина стороны c: " + dFormat.format(sideC) +
+                ", угол: " + dFormat.format(gammaSideC);
     }
 }

@@ -1,6 +1,7 @@
 package ru.cft.focusstart.shape;
 
-import ru.cft.focusstart.param.Pair;
+import ru.cft.focusstart.exc.AppException;
+import ru.cft.focusstart.param.ShapeParams;
 
 import java.text.DecimalFormat;
 
@@ -11,30 +12,34 @@ public class Rectangle extends GeometricFigure {
     private double perimeter;
     private double area;
 
-    public Rectangle(Pair pair) {
-        if (pair.params.get(0) < pair.params.get(1)) {
-            length = pair.params.get(1);
-            width = pair.params.get(0);
-        } else {
-            length = pair.params.get(0);
-            width = pair.params.get(1);
+    public Rectangle(ShapeParams shapeParams) throws AppException {
+        if (shapeParams.params.size() != 2) {
+            throw new AppException("Wrong number of parameters");
         }
-        this.perimeter = 0;
-        this.area = 0;
+        length = Math.max(shapeParams.params.get(0), shapeParams.params.get(1));
+        width = Math.min(shapeParams.params.get(0), shapeParams.params.get(1));
+
+        if (length > 0 && width > 0) {
+            diagonal = calcDiagonal();
+            perimeter = calcPerimeter();
+            area = calcArea();
+        } else {
+            throw new AppException("Parameters don't form a rectangle");
+        }
     }
 
-    public void calcDiagonal() {
-        diagonal = Math.sqrt(sqr(length) + sqr(width));
+    private double calcDiagonal() {
+        return Math.sqrt(Math.pow(length, 2) + Math.pow(width, 2));
     }
 
     @Override
-    public void calcPerimeter() {
-        perimeter = 2 * (length + width);
+    public double calcPerimeter() {
+        return 2 * (length + width);
     }
 
     @Override
-    public void calcArea() {
-        area = length * width;
+    public double calcArea() {
+        return length * width;
     }
 
     @Override

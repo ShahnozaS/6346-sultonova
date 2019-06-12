@@ -1,34 +1,40 @@
 package ru.cft.focusstart.shape;
 
-import ru.cft.focusstart.param.Pair;
+import ru.cft.focusstart.exc.AppException;
+import ru.cft.focusstart.param.ShapeParams;
 
 import java.text.DecimalFormat;
 
 public class Circle extends GeometricFigure {
-    private final double PI = 3.1415;
-    private double radius;
-    private double diameter;
-    private double perimeter;
-    private double area;
+    private static double radius;
+    private static double diameter;
+    private static double perimeter;
+    private static double area;
 
-    public Circle(Pair pair) {
-        this.radius = pair.params.get(0);
-        this.diameter = 2 * radius;
-        this.perimeter = 0;
-        this.area = 0;
+    public Circle(ShapeParams shapeParams) throws AppException {
+        if (shapeParams.params.size() != 1) {
+            throw new AppException("Wrong number of parameters");
+        }
+        if (shapeParams.params.get(0) >= 0) {
+            radius = shapeParams.params.get(0);
+            diameter = 2 * radius;
+            perimeter = calcPerimeter();
+            area = calcArea();
+        } else {
+            throw new AppException("Radius is negative");
+        }
     }
 
     @Override
-    public void calcPerimeter() {
-        perimeter = 2 * PI * radius;
+    public double calcPerimeter() {
+        return 2 * Math.PI * radius;
     }
 
     @Override
-    public void calcArea() {
-        area = 2 * PI * sqr(radius);
+    public double calcArea() {
+        return 2 * Math.PI * Math.pow(radius, 2);
     }
 
-    @Override
     public String toString() {
         DecimalFormat dFormat = new DecimalFormat(FORMAT);
         return "Тип фигуры: Круг \r\n" +

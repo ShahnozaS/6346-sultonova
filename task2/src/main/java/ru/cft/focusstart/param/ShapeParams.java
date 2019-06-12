@@ -1,9 +1,9 @@
 package ru.cft.focusstart.param;
 
-import java.util.ArrayList;
+import java.util.List;
 
 //входные параметры
-public class Pair {
+public class ShapeParams {
     public String type;
-    public ArrayList<Double> params;
+    public List<Double> params;
 }

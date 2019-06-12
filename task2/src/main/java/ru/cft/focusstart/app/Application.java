@@ -2,25 +2,31 @@ package ru.cft.focusstart.app;
 
 import ru.cft.focusstart.data.InputData;
 import ru.cft.focusstart.data.OutputData;
-import ru.cft.focusstart.param.Pair;
+import ru.cft.focusstart.exc.AppException;
+import ru.cft.focusstart.param.ShapeParams;
 
 public class Application {
     public static void main(String[] args) {
-        if (args.length == 2) {
-            String fileIn = args[0];
-            String fileOut = args[1];
-            Pair pair = InputData.readFromFile(fileIn);
-            if (pair != null) {
-                OutputData.printData(pair, fileOut);
+        if (args.length < 1 || args.length > 2) {
+            System.out.println("Wrong number of arguments");
+            return;
+        }
+        ShapeParams params;
+        try {
+            params = InputData.readFromFile(args[0]);
+        } catch (AppException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        try {
+            if (args.length == 2) {
+                OutputData.printData(params, args[1]);
+            } else {
+                OutputData.printData(params);
             }
-        } else if (args.length == 1) {
-            String fileIn = args[0];
-            Pair pair = InputData.readFromFile(fileIn);
-            if (pair != null) {
-                OutputData.printData(pair);
-            }
-        } else {
-            System.out.println("No input file found");
+        } catch (AppException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

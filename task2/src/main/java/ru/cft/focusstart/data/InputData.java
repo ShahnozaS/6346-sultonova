@@ -1,37 +1,39 @@
 package ru.cft.focusstart.data;
 
-import ru.cft.focusstart.param.Pair;
+import ru.cft.focusstart.exc.AppException;
+import ru.cft.focusstart.param.ShapeParams;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class InputData {
-    public static Pair readFromFile(String fileIn) {
-        Pair pair = new Pair();
+    public static ShapeParams readFromFile(String fileIn) throws AppException {
         try (Scanner fileScanner = new Scanner(new File(fileIn))) {
+            ShapeParams shapeParams = new ShapeParams();
             if (fileScanner.hasNextLine()) {
-                pair.type = fileScanner.next();
-                readParams(fileScanner, pair);
+                shapeParams.type = fileScanner.next();
             } else {
-                System.out.printf("File %s is empty \n", fileIn);
+                throw new AppException("File is empty");
             }
+            if (fileScanner.hasNextLine()) {
+                shapeParams.params = readParams(fileScanner);
+            } else {
+                throw new AppException("Shape parameters not found in file");
+            }
+            return shapeParams;
         } catch (FileNotFoundException fne) {
-            System.out.println("File not found");
-            return null;
+            throw new AppException("File not found");
         }
-        return pair;
     }
 
-    private static void readParams(Scanner scanner, Pair pair) {
-        if (scanner.hasNextLine()) {
-            pair.params = new ArrayList<>();
-            while (scanner.hasNext()) {
-                pair.params.add(scanner.nextDouble());
-            }
-        } else {
-            System.out.println("Shape parameters not found in file");
+    private static List<Double> readParams(Scanner scanner) {
+        List<Double> params = new ArrayList<>();
+        while (scanner.hasNext()) {
+            params.add(scanner.nextDouble());
         }
+        return params;
     }
 }
