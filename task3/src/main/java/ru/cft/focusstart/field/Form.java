@@ -1,27 +1,36 @@
 package ru.cft.focusstart.field;
 
-import ru.cft.focusstart.gameprocess.CustomListener;
 import ru.cft.focusstart.gameprocess.GameProcess;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 public class Form extends JFrame {
     private static int mines;
-    private static Grid grid;
+    private int gridX;
+    private int gridY;
     private static Cell[][] cells;
+    private final JFrame parentFrame;
+    private GameProcess gameProcess;
 
-    Form(int mines) {
+    Form(int gridX, int gridY, int mines, JFrame parentFrame) {
+        this.parentFrame = parentFrame;
+        this.gridX = gridX;
+        this.gridY = gridY;
         Form.mines = mines;
         initForm();
     }
 
     //инициализация формы
     private void initForm() {
-        grid = Difficulty.getGrid();
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                parentFrame.setVisible(true);
+            }
+        });
         setLayout(new BorderLayout());
 
         JMenuItem exitItem = new JMenuItem("Exit");
@@ -63,14 +72,15 @@ public class Form extends JFrame {
 
     //инициализация игрового поля
     private void initCenterPanel(JPanel centerPanel) {
-        centerPanel.setLayout(new GridLayout(grid.getGridX(), grid.getGridY()));
-        cells = new Cell[grid.getGridX()][grid.getGridY()];
+        centerPanel.setLayout(new GridLayout(gridX, gridY));
+        cells = new Cell[gridX][gridY];
         for (int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[i].length; j++) {
                 cells[i][j] = new Cell(i, j);
             }
         }
-        GameProcess.initField();
+        gameProcess = new GameProcess(gridX, gridY);
+        gameProcess.initField();
         addListenerToCells();
         for (int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[i].length; j++) {
@@ -82,17 +92,23 @@ public class Form extends JFrame {
     private void addListenerToCells() {
         for (Cell[] cell : cells) {
             for (int i = 0; i < cell.length; i++) {
-                cell[i].addMouseListener(new CustomListener());
+                cell[i].addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        if (e.getButton() == MouseEvent.BUTTON1) {
+                            gameProcess.openCell((Cell) e.getSource());
+                        }
+                        if (e.getButton() == MouseEvent.BUTTON3) {
+                            gameProcess.setFlag((Cell) e.getSource());
+                        }
+                    }
+                });
             }
         }
     }
 
     public static Cell[][] getCells() {
         return cells;
-    }
-
-    public static Grid getGrid() {
-        return grid;
     }
 
     public static int getMinesCount() {

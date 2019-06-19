@@ -6,8 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Difficulty extends JFrame {
-    private static Grid grid = null;
-
     public Difficulty() {
         super("Выберите уровень игры");
         chooseLvl();
@@ -29,8 +27,7 @@ public class Difficulty extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
-                grid = new Grid(9, 9);
-                new Form(10);
+                new Form(9, 9, 10, Difficulty.this);
             }
         });
 
@@ -38,8 +35,7 @@ public class Difficulty extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
-                grid = new Grid(16, 16);
-                new Form(30);
+                new Form(16, 16, 30, Difficulty.this);
             }
         });
 
@@ -47,8 +43,7 @@ public class Difficulty extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
-                grid = new Grid(16, 30);
-                new Form(60);
+                new Form(16, 30, 60, Difficulty.this);
             }
         });
         content.add(btnEasy);
@@ -60,9 +55,5 @@ public class Difficulty extends JFrame {
         setResizable(false);
         setLocationRelativeTo(null);
         setVisible(true);
-    }
-
-    public static Grid getGrid() {
-        return grid;
     }
 }

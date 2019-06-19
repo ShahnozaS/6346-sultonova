@@ -1,27 +1,33 @@
 package ru.cft.focusstart.gameprocess;
 
+import ru.cft.focusstart.Icons;
 import ru.cft.focusstart.field.Cell;
 import ru.cft.focusstart.field.Form;
-import ru.cft.focusstart.field.Grid;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class GameProcess {
-    private static int closedCells;
-    private static boolean firstClick;
-    private static Cell[][] cells = Form.getCells();
-    private static Grid grid = Form.getGrid();
+    private int closedCells;
+    private boolean firstClick;
+    private int gridX;
+    private int gridY;
+    private Cell[][] cells = Form.getCells();
+
+    public GameProcess(int gridX, int gridY) {
+        this.gridX = gridX;
+        this.gridY = gridY;
+    }
 
     //инициализация поля
-    public static void initField() {
+    public void initField() {
         firstClick = false;
-        closedCells = grid.getGridX() * grid.getGridY();
+        closedCells = gridX * gridY;
         resetCells();
     }
 
     //сбрасывает значения ячеек
-    private static void resetCells() {
+    private void resetCells() {
         Dimension buttonPreferredSize = new Dimension(30, 30);
         for (int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[i].length; j++) {
@@ -36,7 +42,7 @@ public class GameProcess {
     }
 
     //открывает ячейку
-    public static void openCell(Cell cell) {
+    public void openCell(Cell cell) {
         if (!firstClick) {
             firstClick = true;
             setMines(Form.getMinesCount(), cell.getRow(), cell.getColumn());
@@ -60,7 +66,7 @@ public class GameProcess {
     }
 
     //устанавливает/снимает флаг
-    public static void setFlag(Cell cell) {
+    public void setFlag(Cell cell) {
         if (!cell.isOpened()) {
             cell.setFlagged(!cell.isFlagged());
             if (cell.isFlagged()) {
@@ -72,8 +78,8 @@ public class GameProcess {
     }
 
     //открывает пустые ячейки
-    private static void openSafeCells(int x, int y) {
-        if (x < 0 || y < 0 || x >= grid.getGridX() || y >= grid.getGridY()) {
+    private void openSafeCells(int x, int y) {
+        if (x < 0 || y < 0 || x >= gridX || y >= gridY) {
             return;
         }
         if (cells[x][y].isOpened() || cells[x][y].isFlagged()) {
@@ -94,7 +100,7 @@ public class GameProcess {
     }
 
     //проверяет содержит ли ячейка информацию о минах
-    private static boolean isCellNumber(Cell cell) {
+    private boolean isCellNumber(Cell cell) {
         if (cell.getNumberOfMines() > 0) {
             cell.setIcon(Icons.getNumberIcon(cell.getNumberOfMines()));
             cell.setOpened(true);
@@ -105,7 +111,7 @@ public class GameProcess {
     }
 
     //показываает результат игры и обновляет поле
-    private static void showGameOver() {
+    private void showGameOver() {
         if (closedCells != Form.getMinesCount()) {
             showMines();
             JOptionPane.showMessageDialog(null, "Вы проиграли :(", "Сообщение", JOptionPane.INFORMATION_MESSAGE);
@@ -117,7 +123,7 @@ public class GameProcess {
     }
 
     //расставляет мины в случайном порядке
-    private static void setMines(int minesCount, int row, int column) {
+    private void setMines(int minesCount, int row, int column) {
         for (int i = 1; i <= minesCount; i++) {
             int x;
             int y;
@@ -131,7 +137,7 @@ public class GameProcess {
     }
 
     //показывает все ячейки с минами
-    private static void showMines() {
+    private void showMines() {
         for (Cell[] cellsMass : cells) {
             for (Cell cell : cellsMass) {
                 if (cell.isMined()) {
@@ -142,7 +148,7 @@ public class GameProcess {
     }
 
     //записывает в ячейки число мин вокруг
-    private static void setCountOfMines() {
+    private void setCountOfMines() {
         for (int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[i].length; j++) {
                 if (cells[i][j].isMined()) continue;
@@ -153,11 +159,11 @@ public class GameProcess {
     }
 
     //считает количество мин вокруг текущей ячейки
-    private static int calcMinesAround(int x, int y) {
+    private int calcMinesAround(int x, int y) {
         int minesCount = 0;
         for (int i = x - 1; i <= x + 1; i++) {
             for (int j = y - 1; j <= y + 1; j++) {
-                if (i < 0 || j < 0 || i >= grid.getGridX() || j >= grid.getGridY()) {
+                if (i < 0 || j < 0 || i >= gridX || j >= gridY) {
                     continue;
                 }
                 minesCount += cells[i][j].isMined() ? 1 : 0;

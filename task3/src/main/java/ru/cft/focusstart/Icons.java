@@ -1,4 +1,4 @@
-package ru.cft.focusstart.gameprocess;
+package ru.cft.focusstart;
 
 import ru.cft.focusstart.field.Form;
 
