@@ -7,6 +7,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Consumer implements Runnable {
+    private static final int DELAY = 5000;
     private int id;
     private static AtomicInteger count = new AtomicInteger(0);
     private BlockingQueue<Resource> store;
@@ -22,18 +23,16 @@ public class Consumer implements Runnable {
     public void run() {
         try {
             while (!Thread.currentThread().isInterrupted()) {
-                Thread.sleep(1000);
                 Resource resource = store.take();
 
                 MDC.put("threadNum", id + "");
                 MDC.put("resourceId", resource.getId() + "");
 
                 log.info(" Ресурс забран со склада");
-                Thread.sleep(5000);
+                Thread.sleep(DELAY);
                 log.info(" Ресурс потреблен");
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
             log.info("Завершение приложения");
         }
     }

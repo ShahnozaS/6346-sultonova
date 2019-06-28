@@ -7,6 +7,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Producer implements Runnable {
+    private static final int DELAY = 1000;
     private int id;
     private static AtomicInteger count = new AtomicInteger(0);
     private BlockingQueue<Resource> store;
@@ -28,13 +29,11 @@ public class Producer implements Runnable {
                 MDC.put("resourceId", resource.getId() + "");
 
                 log.info(" Ресурс произведен");
-                Thread.sleep(1000);
+                Thread.sleep(DELAY);
                 store.put(resource);
                 log.info(" Ресурс помещен на склад");
-                Thread.sleep(1000);
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
             log.info("Завершение приложения");
         }
     }

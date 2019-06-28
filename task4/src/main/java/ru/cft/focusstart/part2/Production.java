@@ -7,6 +7,7 @@ import java.util.concurrent.*;
 
 public class Production {
     private static final int STORE_SIZE = 5;
+    private static final int DELAY = 30000;
     private static final Logger log = LoggerFactory.getLogger(Production.class);
 
     public static void main(String[] args) {
@@ -25,7 +26,7 @@ public class Production {
         consumer.start();
 
         try {
-            Thread.sleep(30000);
+            Thread.sleep(DELAY);
         } catch (InterruptedException e) {
             log.info("Завершение приложения");
         }
