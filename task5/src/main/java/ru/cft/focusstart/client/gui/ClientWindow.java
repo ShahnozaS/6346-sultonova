@@ -33,7 +33,6 @@ public class ClientWindow extends JFrame {
 
     public void initComponents() {
         Font font = new Font("Times New Roman", Font.ITALIC, 16);
-        File imageFile = new File(getClass().getResource("/image/sea.jpg").getFile());
         Color backColor = new Color(224, 255, 255);
 
         setPreferredSize(new Dimension(700, 600));
@@ -77,14 +76,18 @@ public class ClientWindow extends JFrame {
         southPanel.add(textField, BorderLayout.CENTER);
         southPanel.add(sendBtn, BorderLayout.EAST);
 
-        BufferedImage backgroundImg = null;
+        Icon backgroundIcon = null;
         try {
-            backgroundImg = ImageIO.read(imageFile);
-        } catch (IOException e) {
+            File imageFile = new File(getClass().getResource("/image/sea.jpg").getFile());
+            BufferedImage backgroundImg = ImageIO.read(imageFile);
+            backgroundIcon = new ImageIcon(backgroundImg);
+        } catch (IOException | NullPointerException e) {
             log.info("Не удалось загрузить изображение");
         }
-        Icon backgroundIcon = new ImageIcon(backgroundImg);
         JLabel contentLabel = new JLabel(backgroundIcon);
+        if (backgroundIcon == null) {
+            textArea.setForeground(Color.BLACK);
+        }
 
         contentLabel.setLayout(new BorderLayout());
         contentLabel.add(scrollPane, BorderLayout.CENTER);
@@ -106,7 +109,7 @@ public class ClientWindow extends JFrame {
     private void initTextArea(Font font) {
         textArea.setWrapStyleWord(true);
         textArea.setLineWrap(true);
-        textArea.setForeground(new Color(255, 255, 255));
+        textArea.setForeground(Color.WHITE);
         textArea.setFont(font);
         textArea.setColumns(40);
         textArea.setEditable(false);

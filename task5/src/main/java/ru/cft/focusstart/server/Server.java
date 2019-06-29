@@ -9,13 +9,14 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 public class Server {
 
     private ServerSocket serverSocket;
-    private Vector<ClientHandler> clients;
+    private List<ClientHandler> clients;
     private static final Logger log = LoggerFactory.getLogger(Server.class);
 
     Server() {
@@ -23,7 +24,7 @@ public class Server {
         try (InputStream propertiesStream = Server.class.getClassLoader().getResourceAsStream("server.properties")) {
             properties.load(propertiesStream);
             serverSocket = new ServerSocket(Integer.valueOf(properties.getProperty("server.port")));
-            clients = new Vector<>();
+            clients = new ArrayList<>();
             Socket socket = null;
 
             while (true) {
@@ -91,7 +92,7 @@ public class Server {
         broadcastMsg(getClientsJSON());
     }
 
-    public Vector<ClientHandler> getClients() {
-        return clients;
-    }
+//    public int getClientsSize() {
+//        return clients.size();
+//    }
 }

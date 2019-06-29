@@ -41,9 +41,7 @@ public class ClientHandler {
                         if (!server.isNameBusy(userName)) {
                             sendMsg("/authok " + userName);
                             name = userName;
-                            if (server.getClients().size() != 0) {
-                                server.broadcastMsg(">>> " + name + " присоединился к чату");
-                            }
+                            server.broadcastMsg(">>> " + name + " присоединился к чату");
                             server.subscribe(ClientHandler.this);
                             break;
                         } else sendMsg("/reject" + " Имя уже используется");
