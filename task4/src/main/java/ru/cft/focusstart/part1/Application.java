@@ -17,9 +17,12 @@ public class Application {
         List<Future<Double>> tasks = new ArrayList<>();
 
         int step = N / POOL_SIZE;
-        for (int i = 1; i <= N; i += step) {
+
+        int i;
+        for (i = 1; i <= (POOL_SIZE - 1) * step; i += step) {
             tasks.add(threadPool.submit(new Task(i, i + step - 1)));
         }
+        tasks.add(threadPool.submit(new Task(i, N)));
 
         List<Double> results = new ArrayList<>();
 
